@@ -29,7 +29,9 @@ workflows:
   version: 2
   build:
     jobs:
-      - deploy_project:
+      - deploy:
+          requires:
+            - deploy_project
           context: AWS
           filters:
             branches:
