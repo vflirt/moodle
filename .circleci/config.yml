@@ -8,9 +8,13 @@ jobs:
     working_directory: ~/circle-ci-s3-deploy
     docker:
       - image: 'circleci/node:10.16.3-browsers'
+    context: AWS
     steps:
       - checkout
       - run: mkdir bucket && echo "lorem ipsum" > bucket/build_asset.txt
+      - run: echo $AWS_ACCESS_KEY_ID_BLUE
+      - run: echo $AWS_SECRET_ACCESS_KEY_BLUE
+      - run: echo $AWS_REGION_BLUE
       - persist_to_workspace:
           root: .
           paths:
