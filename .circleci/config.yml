@@ -30,8 +30,6 @@ workflows:
   build:
     jobs:
       - deploy_project:
-          requires:
-            - build
           context: AWS
           filters:
             branches:
