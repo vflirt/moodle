@@ -25,16 +25,3 @@ jobs:
           from: bucket
           to: 's3://S3_BUCKET/circle-ci-s3-deploy'
 
-workflows:
-  version: 2
-  build:
-    jobs:
-      - deploy:
-          requires:
-            - deploy_project
-          context: AWS
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /.*/
