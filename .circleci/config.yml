@@ -11,9 +11,11 @@ jobs:
     steps:
       - checkout
       - run: mkdir bucket && echo "lorem ipsum" > bucket/build_asset.txt
+      - run: echo "start echo"
       - run: echo $AWS_ACCESS_KEY_ID_BLUE
       - run: echo $AWS_SECRET_ACCESS_KEY_BLUE
       - run: echo $AWS_REGION_BLUE
+      - run: echo "end echo"
       - persist_to_workspace:
           root: .
           paths:
@@ -28,3 +30,9 @@ jobs:
           from: bucket
           to: 's3://S3_BUCKET/circle-ci-s3-deploy'
 
+workflows:
+  build:
+    jobs:
+      - build:
+          context:
+            - AWS
