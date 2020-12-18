@@ -1,0 +1,38 @@
+version: 2.1
+
+orbs:
+  aws-s3: circleci/aws-s3@2.0.0
+
+jobs:
+  build:
+    working_directory: ~/circle-ci-s3-deploy
+    docker:
+      - image: 'circleci/node:10.16.3-browsers'
+    steps:
+      - checkout
+      - run: mkdir bucket && echo "lorem ipsum" > bucket/build_asset.txt
+      - run: echo "start echo"
+      - run: echo $AWS_ACCESS_KEY_ID_BLUE
+      - run: echo $AWS_SECRET_ACCESS_KEY_BLUE
+      - run: echo $AWS_REGION_BLUE
+      - run: echo "end echo"
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+      - aws-s3/sync:
+          arguments: |
+            --cache-control "max-age=86400" \
+            --dryrun
+          aws-access-key-id: AWS_ACCESS_KEY_ID_BLUE
+          aws-region: AWS_REGION_BLUE
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY_BLUE
+          from: ~/circle-ci-s3-deploy/bucket
+          to: "s3://$S3_BUCKET/circle-ci-s3-deploy/bucket"
+
+workflows:
+  build:
+    jobs:
+      - build:
+          context:
+            - AWS

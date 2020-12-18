@@ -1,38 +1,40 @@
-version: 2.1
-
-orbs:
-  aws-s3: circleci/aws-s3@2.0.0
-
+# PHP CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-php/ for more details
+# Updated this file
+version: 2
 jobs:
   build:
-    working_directory: ~/circle-ci-s3-deploy
     docker:
-      - image: 'circleci/node:10.16.3-browsers'
+      # Specify the version you desire here
+      #- image: circleci/php:7.1-node-browsers
+      - image: docksal/ci-agent:1.9-php
+    working_directory: /home/agent/build
     steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "94:95:c0:1d:e1:2e:48:96:a0:3d:ba:92:49:fb:e5:e8"
       - checkout
-      - run: mkdir bucket && echo "lorem ipsum" > bucket/build_asset.txt
-      - run: echo "start echo"
-      - run: echo $AWS_ACCESS_KEY_ID_BLUE
-      - run: echo $AWS_SECRET_ACCESS_KEY_BLUE
-      - run: echo $AWS_REGION_BLUE
-      - run: echo "end echo"
-      - persist_to_workspace:
-          root: .
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "composer.lock" }}
+      - run:
+          name:  Composer install
+          command: |
+            cd web && composer install -n --prefer-dist --ignore-platform-reqs && cd ..
+      - save_cache:
+          key: v1-dependencies-{{ checksum "composer.lock" }}
           paths:
-            - .
-      - aws-s3/sync:
-          arguments: |
-            --cache-control "max-age=86400" \
-            --dryrun
-          aws-access-key-id: AWS_ACCESS_KEY_ID_BLUE
-          aws-region: AWS_REGION_BLUE
-          aws-secret-access-key: AWS_SECRET_ACCESS_KEY_BLUE
-          from: ~/circle-ci-s3-deploy/bucket
-          to: "s3://$S3_BUCKET/circle-ci-s3-deploy/bucket"
-
+            - ./vendor
+      - run:
+          name: Uploading files to AWS
+          command: |
+            rsync -a /home/agent/build/. drupal@18.217.37.219:/var/www/html/moodle
 workflows:
-  build:
+  version: 2
+  build_and_test:
     jobs:
       - build:
-          context:
-            - AWS
+          filters:
+            branches:
+              only: master
