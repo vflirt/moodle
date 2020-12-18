@@ -17,15 +17,15 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "composer.lock" }}
+            - v1-dependencies-{{ checksum "web/composer.lock" }}
       - run:
           name:  Composer install
           command: |
             cd web && composer install -n --prefer-dist --ignore-platform-reqs && cd ..
       - save_cache:
-          key: v1-dependencies-{{ checksum "composer.lock" }}
+          key: v1-dependencies-{{ checksum "web/composer.lock" }}
           paths:
-            - ./vendor
+            - ./web/vendor
       - run:
           name: Uploading files to AWS
           command: |
