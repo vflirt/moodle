@@ -1,0 +1,26 @@
+Hello moodle user,
+
+In the instructions below, MOODLE_HOME is the path to where your Moodle is
+deployed in your server.
+
+To install this plugin:
+
+1- Upload/unpack everything under:
+MOODLE_HOME/auth/loginredir
+
+NOTE 1: You have to create the 'loginredir' folder.
+
+NOTE 2: if the package you got the files from put them within a folder of its own,
+remove the files from that folder. For example, there should *NOT* be a "moodle-auth_loginredir"
+folder under "MOODLE_HOME/auth/loginredir".
+
+2- Login to Moodle with your admin account.
+
+3- Go to:
+Site Administration --> Plugins --> Authentication --> Manage Authentication
+
+4- Enable "Login user redirection".
+
+5- Save changes
+
+6- Try it out!
